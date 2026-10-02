@@ -1,0 +1,468 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>For Navya</title>
+<style>
+  :root{
+    --plum-950: #2b0f1c;
+    --plum-900: #3a1526;
+    --wine-700: #6b1f3b;
+    --rose-500: #d9536b;
+    --rose-300: #f2a6bb;
+    --blush-100: #fbe3e9;
+    --gold-400: #e8b96a;
+    --cream: #fff6ef;
+  }
+
+  *{ box-sizing: border-box; margin:0; padding:0; }
+
+  html, body{
+    height:100%;
+    width:100%;
+    overflow:hidden;
+    font-family: 'Iowan Old Style', 'Palatino Linotype', Georgia, serif;
+    background: radial-gradient(ellipse at 50% 20%, var(--wine-700) 0%, var(--plum-900) 55%, var(--plum-950) 100%);
+    color: var(--cream);
+  }
+
+  #app{
+    position:relative;
+    height:100vh;
+    width:100vw;
+  }
+
+  /* ---------- floating hearts background ---------- */
+  .bg-hearts{
+    position:fixed;
+    inset:0;
+    pointer-events:none;
+    overflow:hidden;
+    z-index:0;
+  }
+  .bg-heart{
+    position:absolute;
+    bottom:-10%;
+    font-size: 20px;
+    opacity:0.35;
+    color: var(--rose-300);
+    animation: rise linear infinite;
+  }
+  @keyframes rise{
+    0%{ transform: translateY(0) translateX(0) rotate(0deg); opacity:0; }
+    10%{ opacity:0.45;}
+    100%{ transform: translateY(-115vh) translateX(var(--drift, 20px)) rotate(360deg); opacity:0; }
+  }
+
+  /* ---------- password screen ---------- */
+  .screen{
+    position:absolute;
+    inset:0;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    flex-direction:column;
+    z-index:2;
+    transition: opacity 0.6s ease;
+  }
+
+  .lock-card{
+    text-align:center;
+    padding: 48px 40px;
+    max-width: 380px;
+    width: 88%;
+  }
+
+  .eyebrow{
+    letter-spacing: 0.35em;
+    text-transform: uppercase;
+    font-size: 11px;
+    color: var(--gold-400);
+    font-family: 'Futura', 'Trebuchet MS', sans-serif;
+    margin-bottom: 18px;
+  }
+
+  .lock-title{
+    font-size: 30px;
+    font-weight: 400;
+    color: var(--cream);
+    margin-bottom: 8px;
+    font-style: italic;
+  }
+
+  .lock-sub{
+    font-size: 14px;
+    color: var(--rose-300);
+    margin-bottom: 34px;
+    font-family: 'Trebuchet MS', sans-serif;
+  }
+
+  .pw-row{
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    gap: 10px;
+  }
+
+  #pw-input{
+    background: rgba(255,255,255,0.06);
+    border: 1px solid var(--rose-500);
+    border-radius: 999px;
+    padding: 13px 22px;
+    color: var(--cream);
+    font-size: 15px;
+    width: 220px;
+    outline: none;
+    font-family: 'Trebuchet MS', sans-serif;
+    letter-spacing: 0.05em;
+    transition: border-color 0.3s, box-shadow 0.3s;
+  }
+  #pw-input::placeholder{ color: rgba(251,227,233,0.4); }
+  #pw-input:focus{
+    border-color: var(--gold-400);
+    box-shadow: 0 0 0 3px rgba(232,185,106,0.15);
+  }
+
+  #pw-submit{
+    background: var(--rose-500);
+    border:none;
+    color: var(--cream);
+    width: 44px;
+    height: 44px;
+    border-radius: 50%;
+    font-size: 18px;
+    cursor:pointer;
+    transition: transform 0.2s, background 0.2s;
+    flex-shrink:0;
+  }
+  #pw-submit:hover{ background: var(--gold-400); transform: scale(1.06); color: var(--plum-950); }
+
+  .pw-error{
+    margin-top: 16px;
+    font-size: 13px;
+    color: var(--rose-300);
+    font-family: 'Trebuchet MS', sans-serif;
+    height: 16px;
+    opacity:0;
+    transition: opacity 0.3s;
+  }
+  .pw-error.show{ opacity:1; }
+
+  .hidden{ display:none !important; }
+  .fade-out{ opacity:0; pointer-events:none; }
+
+  /* ---------- proposal screen ---------- */
+  #proposal-screen{ z-index:1; }
+
+  .ring-icon{
+    font-size: 40px;
+    margin-bottom: 22px;
+    animation: float-ring 3.2s ease-in-out infinite;
+    filter: drop-shadow(0 4px 12px rgba(0,0,0,0.4));
+  }
+  @keyframes float-ring{
+    0%,100%{ transform: translateY(0) rotate(-6deg); }
+    50%{ transform: translateY(-10px) rotate(6deg); }
+  }
+
+  .propose-title{
+    font-size: clamp(26px, 5vw, 46px);
+    text-align:center;
+    line-height:1.3;
+    padding: 0 20px;
+    max-width: 700px;
+    font-style: italic;
+    font-weight:400;
+    text-shadow: 0 2px 20px rgba(217,83,107,0.4);
+  }
+
+  .propose-title .name{
+    color: var(--gold-400);
+    font-style: normal;
+    font-weight: 600;
+    display:inline-block;
+  }
+
+  .btn-row{
+    position:relative;
+    margin-top: 56px;
+    display:flex;
+    gap: 26px;
+    align-items:center;
+    justify-content:center;
+    height: 70px;
+    width: 90vw;
+    max-width: 480px;
+  }
+
+  .btn{
+    padding: 16px 38px;
+    font-size: 17px;
+    border-radius: 999px;
+    border: none;
+    cursor:pointer;
+    font-family: 'Trebuchet MS', sans-serif;
+    letter-spacing: 0.03em;
+    font-weight: 600;
+    transition: transform 0.15s ease;
+  }
+
+  #yes-btn{
+    background: linear-gradient(135deg, var(--gold-400), var(--rose-500));
+    color: var(--plum-950);
+    box-shadow: 0 8px 24px rgba(217,83,107,0.35);
+  }
+  #yes-btn:hover{ transform: scale(1.08); }
+  #yes-btn:active{ transform: scale(0.97); }
+
+  #no-btn{
+    background: transparent;
+    border: 1.5px solid var(--rose-300);
+    color: var(--rose-300);
+    position: absolute;
+    left: calc(50% + 90px);
+    top: 50%;
+    transform: translateY(-50%);
+    transition: left 0.18s ease, top 0.18s ease, transform 0.18s ease;
+    white-space: nowrap;
+  }
+
+  .hint{
+    margin-top: 90px;
+    font-size: 12px;
+    color: rgba(251,227,233,0.45);
+    font-family: 'Trebuchet MS', sans-serif;
+    letter-spacing: 0.08em;
+    text-align:center;
+  }
+
+  /* ---------- celebration screen ---------- */
+  #celebration{
+    z-index:3;
+    background: radial-gradient(ellipse at 50% 30%, var(--wine-700) 0%, var(--plum-950) 70%);
+  }
+
+  .cele-heart{
+    font-size: 56px;
+    margin-bottom: 18px;
+    animation: pop-heart 0.9s ease;
+  }
+  @keyframes pop-heart{
+    0%{ transform: scale(0); }
+    60%{ transform: scale(1.25); }
+    100%{ transform: scale(1); }
+  }
+
+  .cele-title{
+    font-size: clamp(24px, 4.4vw, 38px);
+    text-align:center;
+    font-style: italic;
+    margin-bottom: 10px;
+  }
+  .cele-title .name{
+    color: var(--gold-400);
+    font-style:normal;
+    font-weight:600;
+  }
+
+  .counter-wrap{
+    margin-top: 22px;
+    text-align:center;
+  }
+  .counter-num{
+    font-size: 15px;
+    color: var(--rose-300);
+    font-family: 'Trebuchet MS', sans-serif;
+    letter-spacing: 0.06em;
+  }
+
+  .love-field{
+    position:absolute;
+    inset:0;
+    overflow:hidden;
+    pointer-events:none;
+    z-index:1;
+  }
+  .love-word{
+    position:absolute;
+    color: var(--rose-300);
+    font-style: italic;
+    font-weight: 600;
+    white-space:nowrap;
+    opacity:0;
+    animation: love-burst 2.6s ease-out forwards;
+  }
+  @keyframes love-burst{
+    0%{ opacity:0; transform: translateY(0) scale(0.6); }
+    12%{ opacity:1; transform: translateY(-10px) scale(1); }
+    100%{ opacity:0; transform: translateY(-140px) scale(1.1); }
+  }
+
+  @media (prefers-reduced-motion: reduce){
+    .bg-heart, .ring-icon, .cele-heart, .love-word{ animation: none !important; }
+  }
+
+  @media (max-width: 480px){
+    .btn-row{ height: 130px; flex-direction:column; margin-top:44px; }
+    #no-btn{ position:absolute; }
+  }
+</style>
+</head>
+<body>
+
+<div class="bg-hearts" id="bgHearts"></div>
+
+<div id="app">
+
+  <!-- PASSWORD SCREEN -->
+  <section class="screen" id="password-screen">
+    <div class="lock-card">
+      <div class="eyebrow">A Question Awaits</div>
+      <div class="lock-title">This page is just for you</div>
+      <div class="lock-sub">enter the password to continue</div>
+      <div class="pw-row">
+        <input type="password" id="pw-input" placeholder="password" autocomplete="off" />
+        <button id="pw-submit" aria-label="submit">→</button>
+      </div>
+      <div class="pw-error" id="pw-error">that's not quite it — try again</div>
+    </div>
+  </section>
+
+  <!-- PROPOSAL SCREEN -->
+  <section class="screen hidden" id="proposal-screen">
+    <div class="ring-icon">💍</div>
+    <h1 class="propose-title">Navya, will you<br>be my <span class="name">forever</span> yes?</h1>
+    <div class="btn-row" id="btnRow">
+      <button id="yes-btn" class="btn">Yes, I will 💕</button>
+      <button id="no-btn" class="btn">No</button>
+    </div>
+    <div class="hint">go on, try clicking "no" 😏</div>
+  </section>
+
+  <!-- CELEBRATION SCREEN -->
+  <section class="screen hidden" id="celebration">
+    <div class="love-field" id="loveField"></div>
+    <div class="cele-heart">💖</div>
+    <h1 class="cele-title">I Love You 3000, <span class="name">Navya Bangaram</span></h1>
+    <div class="counter-wrap">
+      <div class="counter-num" id="counterNum">0 / 3000</div>
+    </div>
+  </section>
+
+</div>
+
+<script>
+  // ---------- floating background hearts ----------
+  const bgHearts = document.getElementById('bgHearts');
+  const heartChars = ['♥','❤','💕'];
+  for(let i=0;i<26;i++){
+    const h = document.createElement('div');
+    h.className = 'bg-heart';
+    h.textContent = heartChars[Math.floor(Math.random()*heartChars.length)];
+    h.style.left = Math.random()*100 + '%';
+    h.style.fontSize = (14 + Math.random()*22) + 'px';
+    h.style.setProperty('--drift', (Math.random()*140 - 70) + 'px');
+    h.style.animationDuration = (10 + Math.random()*12) + 's';
+    h.style.animationDelay = (Math.random()*12) + 's';
+    bgHearts.appendChild(h);
+  }
+
+  // ---------- password gate ----------
+  const PASSWORD = "Navyasri";
+  const pwInput = document.getElementById('pw-input');
+  const pwSubmit = document.getElementById('pw-submit');
+  const pwError = document.getElementById('pw-error');
+  const passwordScreen = document.getElementById('password-screen');
+  const proposalScreen = document.getElementById('proposal-screen');
+
+  function tryUnlock(){
+    if(pwInput.value === PASSWORD){
+      passwordScreen.classList.add('fade-out');
+      setTimeout(()=>{
+        passwordScreen.classList.add('hidden');
+        proposalScreen.classList.remove('hidden');
+      }, 550);
+    } else {
+      pwError.classList.add('show');
+      pwInput.style.borderColor = '#d9536b';
+      pwInput.value = '';
+      setTimeout(()=> pwError.classList.remove('show'), 1800);
+    }
+  }
+  pwSubmit.addEventListener('click', tryUnlock);
+  pwInput.addEventListener('keydown', e => { if(e.key === 'Enter') tryUnlock(); });
+
+  // ---------- dodging "No" button ----------
+  const noBtn = document.getElementById('no-btn');
+  const btnRow = document.getElementById('btnRow');
+
+  function dodge(){
+    const rowRect = btnRow.getBoundingClientRect();
+    const btnW = noBtn.offsetWidth;
+    const btnH = noBtn.offsetHeight;
+    const maxX = window.innerWidth - btnW - 24;
+    const maxY = window.innerHeight - btnH - 24;
+    const newX = Math.max(24, Math.random() * maxX);
+    const newY = Math.max(24, Math.random() * maxY);
+    noBtn.style.position = 'fixed';
+    noBtn.style.left = newX + 'px';
+    noBtn.style.top = newY + 'px';
+    noBtn.style.transform = 'translate(0,0)';
+  }
+
+  noBtn.addEventListener('mouseenter', dodge);
+  noBtn.addEventListener('touchstart', (e)=>{ e.preventDefault(); dodge(); }, {passive:false});
+  noBtn.addEventListener('click', (e)=>{ e.preventDefault(); dodge(); });
+
+  // ---------- yes -> celebration ----------
+  const yesBtn = document.getElementById('yes-btn');
+  const celebration = document.getElementById('celebration');
+  const loveField = document.getElementById('loveField');
+  const counterNum = document.getElementById('counterNum');
+
+  yesBtn.addEventListener('click', () => {
+    proposalScreen.classList.add('fade-out');
+    setTimeout(()=>{
+      proposalScreen.classList.add('hidden');
+      celebration.classList.remove('hidden');
+      startLoveBurst();
+    }, 500);
+  });
+
+  function startLoveBurst(){
+    const total = 3000;
+    let count = 0;
+    const phrases = ['I Love You','💖','I Love You 3000','💕','Navya'];
+
+    // spawn words in fast batches so the browser can keep up
+    const spawnBatch = () => {
+      const batchSize = 6;
+      for(let i=0;i<batchSize && count < total; i++, count++){
+        spawnWord(phrases[Math.floor(Math.random()*phrases.length)]);
+      }
+      counterNum.textContent = Math.min(count, total) + ' / ' + total;
+      if(count < total){
+        requestAnimationFrame(() => setTimeout(spawnBatch, 12));
+      } else {
+        counterNum.textContent = total + ' / ' + total + ' 💗';
+      }
+    };
+    spawnBatch();
+  }
+
+  function spawnWord(text){
+    const el = document.createElement('span');
+    el.className = 'love-word';
+    el.textContent = text;
+    el.style.left = (Math.random()*90) + '%';
+    el.style.bottom = (Math.random()*20) + '%';
+    el.style.fontSize = (13 + Math.random()*16) + 'px';
+    el.style.color = Math.random() > 0.5 ? 'var(--rose-300)' : 'var(--gold-400)';
+    loveField.appendChild(el);
+    setTimeout(()=> el.remove(), 2700);
+  }
+</script>
+
+</body>
+</html>
